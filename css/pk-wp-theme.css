@@ -772,6 +772,7 @@ body .acfe-modal.-full>.acfe-modal-wrapper{
 .acf-fc-layout-title .layout-title{
 	text-align: center;
 	margin-block: 10px;
+  color: #444;
 }
 
 .acf-fc-layout-title img{
