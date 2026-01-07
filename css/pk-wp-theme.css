@@ -653,8 +653,13 @@ div#wp-responsive-toggle a:before {
 	background-color: #1e1e1e;
 }
 
+#wpbody-content{
+  border-radius: 16px 16px 0px 0px;
+  overflow: hidden;
+}
+
 #wpcontent{
-	border-radius: 16px 16px 16px 16px;
+	border-radius: 16px 16px 0px 0px;
 	margin-bottom: 16px;
 	margin-right: 16px;
 	background-color: white;
@@ -720,6 +725,12 @@ div#wp-responsive-toggle a:before {
 	margin: 1em 0;
 }
 
+.wp-core-ui .attachment-preview{
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wp-list-table,
 .postbox, #poststuff h3.hndle{
 	border-radius: 8px 8px 8px 8px;
 }
