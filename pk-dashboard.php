@@ -2,7 +2,7 @@
 /*
 Plugin Name: PK Dashboard
 Description: Wordpress backend in PK styling.
-Version: 1.1.3
+Version: 1.1.4
 Author: Pageking
 */
 
