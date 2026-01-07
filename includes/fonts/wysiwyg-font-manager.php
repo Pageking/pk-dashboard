@@ -2,7 +2,6 @@
 if (!defined('ABSPATH')) {
 	exit;
 }
-
 class PK_Font_Manager {
 	
 	private $bb_default_system_fonts;
@@ -14,10 +13,8 @@ class PK_Font_Manager {
 	
 	public function define_default_bb_fonts() {
 		$system_fonts = apply_filters('fl_theme_system_fonts', array());
-		$custom_font = array_key_first($system_fonts);
 		
 		$this->bb_default_system_fonts = array(
-			$custom_font,
 			'Helvetica',
 			'Verdana',
 			'Arial',
@@ -26,6 +23,12 @@ class PK_Font_Manager {
 			'Courier',
 			'system-ui'
 		);
+		
+		// Add custom font if available
+		if (!empty($system_fonts)) {
+			$custom_font = array_key_first($system_fonts);
+			array_unshift($this->bb_default_system_fonts, $custom_font);
+		}
 	}
 	
 	public function get_bb_fonts($mce_css) {
