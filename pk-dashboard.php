@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: PK Dashboard - Rebuild
-Description: Het enige echte Pageking welkomstscherm in Wordpress. - Debug version
-Version: 1.1.2
-Author: Yannick Nijssen
+Plugin Name: PK Dashboard
+Description: Wordpress backend in PK styling.
+Version: 1.1.3
+Author: Pageking
 */
 
 // Prevent direct access
