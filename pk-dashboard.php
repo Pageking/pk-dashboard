@@ -1,10 +1,17 @@
 <?php
-/*
-Plugin Name: PK Dashboard
-Description: Wordpress backend in PK styling.
-Version: 1.1.8
-Author: Pageking
-*/
+/**
+ * Plugin Name: PK Dashboard
+ * Plugin URI: https://pageking.nl
+ * Description: WordPress backend admin styling in PK branding.
+ * Version: 1.1.8
+ * Author: Pageking
+ * Author URI: https://pageking.nl
+ * License: GPL-2.0+
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Requires at least: 5.0
+ * Requires PHP: 7.4
+ * Text Domain: pk-dashboard
+ */
 
 // Prevent direct access
 if (!defined('ABSPATH')) {
@@ -12,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('PK_DASHBOARD_VERSION', '1.1.7');
+define('PK_DASHBOARD_VERSION', '1.1.8');
 define('PK_DASHBOARD_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PK_DASHBOARD_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
