@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('PK_DASHBOARD_VERSION', '1.1.8');
+define('PK_DASHBOARD_VERSION', '1.1.9');
 define('PK_DASHBOARD_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PK_DASHBOARD_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
