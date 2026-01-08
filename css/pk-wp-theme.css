@@ -659,12 +659,16 @@ div#wp-responsive-toggle a:before {
 }
 
 #wpcontent{
-	border-radius: 16px 16px 0px 0px;
+	border-radius: 16px 0px 0px 0px;
 	margin-bottom: 16px;
-	margin-right: 16px;
+	margin-right: 0px;
 	background-color: white;
 	min-height: calc(100vh - 48px);
 	padding: 0px 20px 20px 40px;
+}
+
+.seopress-styles #seopress-header{
+  border-radius: 16px 0px 0px 0px;
 }
 
 #wpcontent .wrap{
