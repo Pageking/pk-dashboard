@@ -13,10 +13,15 @@ class PK_Admin_Theme {
 	}
 	
 	public function register_pk_admin_color_scheme() {
+		$theme_css_path = PK_DASHBOARD_PLUGIN_PATH . 'css/pk-wp-theme.css';
+		$theme_css_url  = PK_DASHBOARD_PLUGIN_URL . 'css/pk-wp-theme.css';
+		$cache_bust     = is_readable($theme_css_path) ? filemtime($theme_css_path) : PK_DASHBOARD_VERSION;
+		$theme_css_url  = add_query_arg('ver', $cache_bust, $theme_css_url);
+
 		wp_admin_css_color(
 			'pk-theme',
 			'PK Dashboard',
-			PK_DASHBOARD_PLUGIN_URL . 'css/pk-wp-theme.css',
+			$theme_css_url,
 			array('#1d1d1b', '#ffffff', '#39f7b2', '#5d63f2')
 		);
 	}
