@@ -2,7 +2,7 @@
 /*
 Plugin Name: PK Dashboard
 Description: Wordpress backend in PK styling.
-Version: 1.1.6
+Version: 1.1.7
 Author: Pageking
 */
 
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('PK_DASHBOARD_VERSION', '1.1.5');
+define('PK_DASHBOARD_VERSION', '1.1.7');
 define('PK_DASHBOARD_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PK_DASHBOARD_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
@@ -26,8 +26,7 @@ $pkDashboardUpdateChecker = PucFactory::buildUpdateChecker(
     'pk-dashboard'
 );
 
-// Uncomment als je repository private is:
-$pkDashboardUpdateChecker->setAuthentication('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');
+// Repo is public; geen authentication nodig
 
 // Main plugin class
 require_once PK_DASHBOARD_PLUGIN_PATH . 'includes/pk-dashboard-main.php';
