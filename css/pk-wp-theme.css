@@ -813,11 +813,13 @@ body .acfe-fc-layouts>ul>li>a:hover{
 	overflow: hidden;
 }
 
-
-.acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-handle,
 .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-controls .-collapse,
 .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap>.acf-fc-layout-controls .-copy, .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap>.acf-fc-layout-controls .-settings,
 .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-controls .-plus-alt, .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-controls .-duplicate-alt, .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-controls .-trash-alt, .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-controls .-more-actions{
   visibility: visible !important;
   background-color: #101828 !important;
+}
+
+.acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-handle{
+  color: #101828 !important;
 }
