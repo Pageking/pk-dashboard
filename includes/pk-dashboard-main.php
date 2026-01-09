@@ -17,6 +17,9 @@ class PK_Dashboard {
 		require_once PK_DASHBOARD_PLUGIN_PATH . 'includes/admin/admin-theme-manager.php';
 		require_once PK_DASHBOARD_PLUGIN_PATH . 'includes/fonts/wysiwyg-font-manager.php';
 		
+		// Load frontend classes
+		require_once PK_DASHBOARD_PLUGIN_PATH . 'includes/class-frontend-assets.php';
+		
 		// Load function files
 		$this->load_functions();
 	}
@@ -43,6 +46,7 @@ class PK_Dashboard {
 	private function init_hooks() {
 		// Initialize classes
 		new PK_Admin_Assets();
+		new PK_Frontend_Assets();
 		new PK_Dashboard_Widgets();
 		new PK_Admin_Theme();
 		new PK_Font_Manager();

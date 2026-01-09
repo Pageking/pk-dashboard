@@ -1,0 +1,8 @@
+/* PK Dashboard - Frontend Styles for Logged-in Users */
+
+/* Add your frontend styles here */
+
+#wpadminbar #wp-admin-bar-pk-dashboard-link{
+  background-color: #5E66EA;
+  color: #ffffff;
+}

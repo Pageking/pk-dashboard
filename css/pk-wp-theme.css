@@ -827,3 +827,8 @@ body .acfe-fc-layouts>ul>li>a:hover{
 .acf-flexible-content .layout.active-layout>.acf-fc-layout-actions-wrap .acf-fc-layout-handle{
   color: #101828 !important;
 }
+
+#wpadminbar #wp-admin-bar-pk-view-site-top{
+  color: white;
+  background-color: #33dea0;
+}
