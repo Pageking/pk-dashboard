@@ -795,6 +795,7 @@ body .acfe-modal.-full>.acfe-modal-wrapper{
 	height: 150px;
 	width: 300px;
 	object-fit: cover;
+  border-radius: 10px;
 }
 
 body .acf-field-flexible-content:not([data-acfe-flexible-placeholder="1"], body [data-acfe-legacy])>.acf-input>.acf-flexible-content>.values>.layout.active-layout>.acf-fc-layout-actions-wrap{
