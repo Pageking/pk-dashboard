@@ -1,9 +1,12 @@
-:root {
-	--pk-backend-headings-font: Montserrat;
-	--pk-backend-body-font: Montserrat;
-	--pk-backend-heading1-font: Montserrat;
 
-}
+		:root {
+			
+			--pk-backend-headings-font: Caprasimo;
+			--pk-backend-body-font: Amiri;
+			--pk-backend-heading1-font: Buda;
+		
+		}
+		
         
 body.mce-content-body {
     /* font-family: var(--pk-backend-body-font), "Brush Script MT", Arial, sans-serif; */
