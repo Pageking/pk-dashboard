@@ -21,12 +21,12 @@
   display: none;
 }
 
-.xdebug-var-dump {
+/* .xdebug-var-dump {
   color: rgb(46, 46, 46);
   display: block;
   position: relative;
   z-index: 90;
-}
+} */
 
 /* TRANSITIONS */
 
@@ -225,7 +225,7 @@ body {
 }
 
 #pk-widget .center {
-  padding: 20px var(--dashboardSpacing) 10px var(--dashboardSpacing);
+  padding: 20px var(--dashboardSpacing) 20px var(--dashboardSpacing);
   display: flex;
 }
 
@@ -517,7 +517,7 @@ body {
 
 #pk-widget .bottom span,
 #pk-widget .bottom .pk-logo {
-  opacity: .3;
+  opacity: .5;
 }
 
 @media screen and (max-width: 1200px) {

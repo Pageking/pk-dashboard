@@ -790,12 +790,12 @@ body .acfe-modal.-full>.acfe-modal-wrapper{
   color: #444;
 }
 
-.acf-fc-layout-title img{
+.acf-fc-layout-title img {
 	margin: 20px auto 0px auto;
-	height: 150px;
-	width: 300px;
-	object-fit: cover;
-  border-radius: 10px;
+	height: auto;
+    width: 300px;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
 }
 
 body .acf-field-flexible-content:not([data-acfe-flexible-placeholder="1"], body [data-acfe-legacy])>.acf-input>.acf-flexible-content>.values>.layout.active-layout>.acf-fc-layout-actions-wrap{
