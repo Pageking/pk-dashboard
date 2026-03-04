@@ -42,14 +42,57 @@ class PK_Font_Manager {
 			'title'   => empty($bb_values['fl-heading-style']) ? $bb_values['fl-heading-font-family'] : $bb_values['fl-title-font-family']
 		);
 		
+		// Collect font URLs
 		$font_urls = array();
 		foreach ($fonts_to_check as $type => $font) {
 			if (!in_array($font, $this->bb_default_system_fonts)) {
 				$font_urls[] = 'https://fonts.googleapis.com/css2?family=' . urlencode($font) . ':wght@100;200;300;400;500;600;700;800;900&display=swap';
 			}
 		}
-		
+
+		// Write CSS vars to file
 		$css_file = PK_DASHBOARD_PLUGIN_PATH . 'css/pk-backend-style.css';
+
+		$system_font_vars = "
+			--pk-backend-headings-font: {$fonts_to_check['heading']};
+			--pk-backend-body-font: {$fonts_to_check['body']};
+			--pk-backend-heading1-font: {$fonts_to_check['title']};
+		";
+
+		$css_vars = ":root {
+			{$system_font_vars}
+		}";
+
+		$existing_css = '';
+		if (file_exists($css_file)) {
+			$existing_css = file_get_contents($css_file);
+			$existing_css = preg_replace('/:root\s*\{[^}]*\}[\s]*/s', '', $existing_css);
+		}
+
+		$new_content = $css_vars . $existing_css;
+
+		if ($existing_css !== $new_content) {
+			$css_dir = dirname($css_file);
+			if (!is_writable($css_dir)) {
+				error_log('PK Font Manager: Cannot write to directory ' . $css_dir);
+			} else {
+				$fp = fopen($css_file, 'c');
+				if ($fp && flock($fp, LOCK_EX)) {
+					ftruncate($fp, 0);
+					$bytes = fwrite($fp, $new_content);
+					if ($bytes === false) {
+						error_log('PK Font Manager: Failed to write to ' . $css_file);
+					}
+					fflush($fp);
+					flock($fp, LOCK_UN);
+					fclose($fp);
+				} else {
+					error_log('PK Font Manager: Could not acquire lock on ' . $css_file);
+				}
+			}
+		}
+		
+		// Add version parameter based on file modification time for cache busting
 		$custom_css = PK_DASHBOARD_PLUGIN_URL . 'css/pk-backend-style.css';
 		if (file_exists($css_file)) {
 			$custom_css .= '?ver=' . filemtime($css_file);
