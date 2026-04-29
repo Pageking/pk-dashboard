@@ -8,14 +8,23 @@
 	const moveUpLabel = window.pkLayoutLegend && window.pkLayoutLegend.labels ? window.pkLayoutLegend.labels.moveUp : 'Omhoog';
 	const moveDownLabel = window.pkLayoutLegend && window.pkLayoutLegend.labels ? window.pkLayoutLegend.labels.moveDown : 'Omlaag';
 	const openLabel = window.pkLayoutLegend && window.pkLayoutLegend.labels ? window.pkLayoutLegend.labels.open : 'Open';
+	const toneCount = 15;
+	const toneClassNames = Array.from({ length: toneCount }, function (_, index) {
+		return 'pk-tone-' + index;
+	});
 
 	let renderFrame = null;
 	let currentRows = [];
 	let currentRowMap = {};
 	let currentLayoutMap = {};
+	const preservedLayoutParts = new WeakMap();
 
 	function normalizeText(value) {
 		return value ? value.replace(/\s+/g, ' ').trim() : '';
+	}
+
+	function normalizeIdentifier(value) {
+		return normalizeText(value).toLowerCase().replace(/[^a-z0-9]+/g, '');
 	}
 
 	function createNode(tagName, className, text) {
@@ -80,7 +89,32 @@
 			hash |= 0;
 		}
 
-		return Math.abs(hash) % 6;
+		return Math.abs(hash) % toneCount;
+	}
+
+	function getLayoutToneSeed(layout) {
+		if (!layout) {
+			return '';
+		}
+
+		const originalTitleNode = layout.querySelector('.acf-fc-layout-original-title');
+		const originalTitle = normalizeIdentifier(originalTitleNode ? originalTitleNode.textContent : '');
+		if (originalTitle) {
+			return originalTitle;
+		}
+
+		const layoutNameInput = layout.querySelector('input[type="hidden"][name$=\"[acf_fc_layout]\"]');
+		const layoutName = normalizeIdentifier(layoutNameInput ? layoutNameInput.value : '');
+		if (layoutName) {
+			return layoutName;
+		}
+
+		const layoutAttribute = normalizeIdentifier(layout.getAttribute('data-layout') || layout.dataset.layout || layout.dataset.id || '');
+		if (layoutAttribute) {
+			return layoutAttribute;
+		}
+
+		return normalizeIdentifier(getLayoutTitle(layout));
 	}
 
 	function getFieldLabel(field) {
@@ -143,21 +177,348 @@
 	}
 
 	function getLayoutTitle(layout) {
-		const selectors = [
-			'.acf-fc-layout-title .layout-title',
-			'.acf-fc-layout-handle',
-			'.acf-fc-layout-title'
-		];
+		const titleNode = layout.querySelector('.acf-fc-layout-title');
+		if (!titleNode) {
+			return '';
+		}
 
-		for (let index = 0; index < selectors.length; index += 1) {
-			const node = layout.querySelector(selectors[index]);
-			const text = normalizeText(node ? node.textContent : '');
-			if (text) {
-				return text;
+		const titleLabel = titleNode.querySelector('.layout-title');
+		if (titleLabel) {
+			return normalizeText(titleLabel.textContent);
+		}
+
+		return getPlainLayoutTitleText(titleNode);
+	}
+
+	function getPlainLayoutTitleText(titleNode) {
+		if (!titleNode) {
+			return '';
+		}
+
+		const directText = Array.prototype.slice.call(titleNode.childNodes).map(function (node) {
+			return node.nodeType === Node.TEXT_NODE ? node.textContent : '';
+		}).join(' ');
+		const normalizedDirectText = normalizeText(directText);
+
+		if (normalizedDirectText) {
+			return normalizedDirectText;
+		}
+
+		const clonedTitleNode = titleNode.cloneNode(true);
+		Array.prototype.slice.call(clonedTitleNode.children).forEach(function (childNode) {
+			clonedTitleNode.removeChild(childNode);
+		});
+
+		return normalizeText(clonedTitleNode.textContent);
+	}
+
+	function getPreservedLayoutParts(layout) {
+		if (!layout) {
+			return {};
+		}
+
+		if (!preservedLayoutParts.has(layout)) {
+			preservedLayoutParts.set(layout, {});
+		}
+
+		return preservedLayoutParts.get(layout);
+	}
+
+	function preserveLayoutParts(titleNode, layout) {
+		if (!titleNode || !layout) {
+			return;
+		}
+
+		const parts = getPreservedLayoutParts(layout);
+		const thumbnailNode = titleNode.querySelector('.layout-thumbnail');
+		const metaNode = titleNode.querySelector('.pk-layout-card-meta');
+
+		if (hasUsableThumbnailNode(thumbnailNode)) {
+			parts.thumbnail = thumbnailNode.cloneNode(true);
+		} else {
+			const originalTitleThumbnail = findOriginalTitleThumbnailNode(titleNode);
+			if (originalTitleThumbnail) {
+				parts.thumbnail = originalTitleThumbnail;
 			}
 		}
 
-		return '';
+		if (metaNode) {
+			parts.meta = metaNode.cloneNode(true);
+		}
+	}
+
+	function hasUsableThumbnailNode(node) {
+		if (!node) {
+			return false;
+		}
+
+		if (node.matches && node.matches('img')) {
+			return !!node.getAttribute('src');
+		}
+
+		if (node.querySelector && node.querySelector('img[src]')) {
+			return true;
+		}
+
+		const backgroundNode = node.querySelector ? node.querySelector('[style*="background-image"]') : null;
+		return !!(backgroundNode && backgroundNode.style && backgroundNode.style.backgroundImage && backgroundNode.style.backgroundImage !== 'none');
+	}
+
+	function decodeOriginalTitleMarkup(titleNode) {
+		if (!titleNode) {
+			return null;
+		}
+
+		const titleContainer = titleNode.closest('.acf-fc-layout-handle') || titleNode.parentElement;
+		const originalTitleNode = titleContainer ? titleContainer.querySelector('.acf-fc-layout-original-title') : null;
+		const originalTitleHtml = originalTitleNode ? originalTitleNode.innerHTML : '';
+		if (!originalTitleHtml || originalTitleHtml.indexOf('layout-thumbnail') === -1) {
+			return null;
+		}
+
+		const parserNode = createNode('div');
+		parserNode.innerHTML = originalTitleHtml;
+		return parserNode;
+	}
+
+	function cloneThumbnailFromContainer(container) {
+		if (!container || !container.querySelector) {
+			return null;
+		}
+
+		const thumbnailNode = container.querySelector('.layout-thumbnail');
+		if (thumbnailNode) {
+			return thumbnailNode.cloneNode(true);
+		}
+
+		const imageNode = container.querySelector('img');
+		if (imageNode) {
+			const wrappedImage = createNode('span', 'layout-thumbnail');
+			wrappedImage.appendChild(imageNode.cloneNode(true));
+			return wrappedImage;
+		}
+
+		const backgroundNode = container.querySelector('[style*="background-image"]');
+		if (backgroundNode && backgroundNode.style && backgroundNode.style.backgroundImage && backgroundNode.style.backgroundImage !== 'none') {
+			const wrappedBackground = createNode('span', 'layout-thumbnail');
+			const previewNode = createNode('span', 'layout-thumbnail__image');
+			previewNode.style.backgroundImage = backgroundNode.style.backgroundImage;
+			previewNode.style.backgroundPosition = backgroundNode.style.backgroundPosition || 'center';
+			previewNode.style.backgroundRepeat = backgroundNode.style.backgroundRepeat || 'no-repeat';
+			previewNode.style.backgroundSize = backgroundNode.style.backgroundSize || 'cover';
+			previewNode.style.display = 'block';
+			previewNode.style.width = '112px';
+			previewNode.style.aspectRatio = '4 / 2.6';
+			previewNode.style.borderRadius = '10px';
+			previewNode.style.border = '1px solid #eaecf0';
+			previewNode.style.boxShadow = '0 6px 18px rgba(16, 24, 40, 0.08)';
+			wrappedBackground.appendChild(previewNode);
+			return wrappedBackground;
+		}
+
+		return null;
+	}
+
+	function findOriginalTitleThumbnailNode(titleNode) {
+		const decodedOriginalTitleNode = decodeOriginalTitleMarkup(titleNode);
+		if (!decodedOriginalTitleNode) {
+			return null;
+		}
+
+		return cloneThumbnailFromContainer(decodedOriginalTitleNode);
+	}
+
+	function findSiblingThumbnailNode(layout) {
+		if (!layout) {
+			return null;
+		}
+
+		const layoutType = getLayoutToneSeed(layout);
+		if (!layoutType) {
+			return null;
+		}
+
+		const siblingLayouts = document.querySelectorAll('.acf-field-flexible-content .layout:not(.acf-clone)');
+
+		for (let index = 0; index < siblingLayouts.length; index += 1) {
+			const siblingLayout = siblingLayouts[index];
+			if (siblingLayout === layout || getLayoutToneSeed(siblingLayout) !== layoutType) {
+				continue;
+			}
+
+			const siblingThumbnail = cloneThumbnailFromContainer(siblingLayout.querySelector('.acf-fc-layout-title'));
+			if (siblingThumbnail) {
+				return siblingThumbnail;
+			}
+		}
+
+		return null;
+	}
+
+	function findPickerThumbnailNode(layout) {
+		if (!layout) {
+			return null;
+		}
+
+		const layoutType = getLayoutToneSeed(layout);
+		if (!layoutType) {
+			return null;
+		}
+
+		const pickerSelectors = [
+			'.acfe-fc-layouts [data-layout]',
+			'.acfe-fc-layouts a',
+			'.acf-fc-popup [data-layout]',
+			'.acf-fc-popup a',
+			'.acf-tooltip [data-layout]',
+			'.acf-tooltip a'
+		];
+
+		for (let index = 0; index < pickerSelectors.length; index += 1) {
+			const candidates = document.querySelectorAll(pickerSelectors[index]);
+
+			for (let candidateIndex = 0; candidateIndex < candidates.length; candidateIndex += 1) {
+				const candidate = candidates[candidateIndex];
+				const candidateSeed = normalizeIdentifier(
+					candidate.getAttribute('data-layout') ||
+					candidate.dataset.layout ||
+					candidate.getAttribute('data-name') ||
+					candidate.textContent
+				);
+
+				if (!candidateSeed || (candidateSeed !== layoutType && candidateSeed.indexOf(layoutType) === -1 && layoutType.indexOf(candidateSeed) === -1)) {
+					continue;
+				}
+
+				const candidateThumbnail = cloneThumbnailFromContainer(candidate);
+				if (candidateThumbnail) {
+					return candidateThumbnail;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	function findTemplateThumbnailNode(layout) {
+		if (!layout) {
+			return null;
+		}
+
+		const layoutType = getLayoutToneSeed(layout);
+		if (!layoutType) {
+			return null;
+		}
+
+		const templateLayouts = document.querySelectorAll('.layout.acf-clone, .acf-clone .layout, .acf-flexible-content .tmpl-layout');
+
+		for (let index = 0; index < templateLayouts.length; index += 1) {
+			const templateLayout = templateLayouts[index];
+			const templateType = getLayoutToneSeed(templateLayout);
+
+			if (!templateType || templateType !== layoutType) {
+				continue;
+			}
+
+			const templateThumbnail = cloneThumbnailFromContainer(templateLayout.querySelector('.acf-fc-layout-title') || templateLayout);
+			if (templateThumbnail) {
+				return templateThumbnail;
+			}
+		}
+
+		return null;
+	}
+
+	function ensureLayoutThumbnailNode(titleNode, layout) {
+		const existingThumbnailNode = titleNode ? titleNode.querySelector('.layout-thumbnail') : null;
+		if (!titleNode || !layout) {
+			return;
+		}
+
+		if (existingThumbnailNode && hasUsableThumbnailNode(existingThumbnailNode)) {
+			return;
+		}
+
+		if (existingThumbnailNode) {
+			existingThumbnailNode.remove();
+		}
+
+		const thumbnailNode = findOriginalTitleThumbnailNode(titleNode) || findSiblingThumbnailNode(layout) || findTemplateThumbnailNode(layout) || findPickerThumbnailNode(layout);
+		if (!thumbnailNode) {
+			return;
+		}
+
+		const titleLabel = titleNode.querySelector('.layout-title');
+		if (titleLabel) {
+			titleLabel.insertAdjacentElement('beforebegin', thumbnailNode);
+		} else {
+			titleNode.insertAdjacentElement('afterbegin', thumbnailNode);
+		}
+	}
+
+	function restoreLayoutParts(titleNode, layout) {
+		if (!titleNode || !layout) {
+			return;
+		}
+
+		preserveLayoutParts(titleNode, layout);
+
+		const parts = getPreservedLayoutParts(layout);
+		const titleLabel = titleNode.querySelector('.layout-title');
+
+		if (!parts.thumbnail) {
+			ensureLayoutThumbnailNode(titleNode, layout);
+			preserveLayoutParts(titleNode, layout);
+		}
+
+		if ((!titleNode.querySelector('.layout-thumbnail') || !hasUsableThumbnailNode(titleNode.querySelector('.layout-thumbnail'))) && parts.thumbnail) {
+			const thumbnailNode = parts.thumbnail.cloneNode(true);
+			if (titleLabel) {
+				titleLabel.insertAdjacentElement('beforebegin', thumbnailNode);
+			} else {
+				titleNode.insertAdjacentElement('afterbegin', thumbnailNode);
+			}
+		}
+
+		if (!titleNode.querySelector('.pk-layout-card-meta') && parts.meta) {
+			const metaNode = parts.meta.cloneNode(true);
+			const activeTitleLabel = titleNode.querySelector('.layout-title');
+			if (activeTitleLabel) {
+				activeTitleLabel.insertAdjacentElement('afterend', metaNode);
+			} else {
+				titleNode.appendChild(metaNode);
+			}
+		}
+	}
+
+	function ensureLayoutTitleLabel(titleNode, layoutTitle) {
+		if (!titleNode) {
+			return null;
+		}
+
+		let titleLabel = titleNode.querySelector('.layout-title');
+		const nextTitle = normalizeText(layoutTitle || getPlainLayoutTitleText(titleNode));
+
+		if (!titleLabel) {
+			titleLabel = createNode('span', 'layout-title', nextTitle);
+
+			Array.prototype.slice.call(titleNode.childNodes).forEach(function (node) {
+				if (node.nodeType === Node.TEXT_NODE && normalizeText(node.textContent)) {
+					titleNode.removeChild(node);
+				}
+			});
+
+			const metaNode = titleNode.querySelector('.pk-layout-card-meta');
+			if (metaNode) {
+				metaNode.insertAdjacentElement('beforebegin', titleLabel);
+			} else {
+				titleNode.appendChild(titleLabel);
+			}
+		} else if (nextTitle) {
+			titleLabel.textContent = nextTitle;
+		}
+
+		return titleLabel;
 	}
 
 	function getLayoutKey(layout, index, row) {
@@ -235,7 +596,7 @@
 		});
 		const header = getBestFieldValue(fields, [/^titel$/, /\btitel\b/, /\btitle\b/, /\bkop\b/, /\bheading\b/, /\bheader\b/, /\bheadline\b/, /^h[1-6]\b/]);
 		const layoutTitle = getLayoutTitle(layout);
-		const tone = getToneIndex(layoutTitle || header || String(index + 1));
+		const tone = getToneIndex(getLayoutToneSeed(layout) || layoutTitle || header || String(index + 1));
 
 		return {
 			index: index + 1,
@@ -284,10 +645,12 @@
 			return;
 		}
 
+		const titleLabel = ensureLayoutTitleLabel(titleNode, layoutData.layoutTitle);
+		restoreLayoutParts(titleNode, layoutData.layout);
+
 		let metaNode = titleNode.querySelector('.pk-layout-card-meta');
 		if (!metaNode) {
 			metaNode = createNode('div', 'pk-layout-card-meta');
-			const titleLabel = titleNode.querySelector('.layout-title');
 			if (titleLabel) {
 				titleLabel.insertAdjacentElement('afterend', metaNode);
 			} else {
@@ -295,9 +658,9 @@
 			}
 		}
 
-		titleNode.classList.remove('pk-tone-0', 'pk-tone-1', 'pk-tone-2', 'pk-tone-3', 'pk-tone-4', 'pk-tone-5');
+		titleNode.classList.remove.apply(titleNode.classList, toneClassNames);
 		titleNode.classList.add('pk-tone-' + layoutData.tone);
-		layoutData.layout.classList.remove('pk-tone-0', 'pk-tone-1', 'pk-tone-2', 'pk-tone-3', 'pk-tone-4', 'pk-tone-5');
+		layoutData.layout.classList.remove.apply(layoutData.layout.classList, toneClassNames);
 		layoutData.layout.classList.add('pk-tone-' + layoutData.tone);
 
 		metaNode.innerHTML = '';
@@ -587,6 +950,7 @@
 			window.acf.addAction('hide_field', scheduleRender);
 			window.acf.addAction('unload', scheduleRender);
 		}
+
 	}
 
 	function init() {
