@@ -880,6 +880,7 @@ body .acfe-modal.-full>.acfe-modal-wrapper{
   margin: 0;
 	height: auto;
   width: 112px;
+  max-width: 100%;
   aspect-ratio: 4 / 2.6;
   object-fit: cover;
   border-radius: 10px;
