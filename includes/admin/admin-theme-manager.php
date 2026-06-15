@@ -63,22 +63,27 @@ class PK_Admin_Theme {
 			true
 		);
 
+		$layout_cats = function_exists('pk_flex_layout_categories') ? pk_flex_layout_categories() : [];
+		$colors      = [];
+		foreach ($layout_cats as $slug) {
+			if (function_exists('pk_flex_category_color')) {
+				$colors[$slug] = pk_flex_category_color($slug);
+			}
+		}
+
 		wp_localize_script('pk-editor-layout-legend', 'pkLayoutLegend', array(
 			'labels' => array(
-				'row' => 'Rij',
-				'rowsActive' => 'rijen actief',
-				'empty' => 'Nog geen rijen gevonden in deze contentopbouw.',
-				'moveUp' => 'Rij omhoog',
-				'moveDown' => 'Rij omlaag',
-				'open' => 'Open layout',
-			)
+				'empty' => 'Geen flex-content gevonden.',
+			),
+			'layoutCats' => $layout_cats,
+			'colors'     => $colors,
 		));
 	}
 
 	public function register_page_layout_legend_metabox() {
 		add_meta_box(
 			'pk-page-layout-legend',
-			'Rij legenda',
+			'Flex content',
 			array($this, 'render_page_layout_legend_metabox'),
 			'page',
 			'side',
@@ -88,6 +93,5 @@ class PK_Admin_Theme {
 
 	public function render_page_layout_legend_metabox() {
 		echo '<div id="pk-layout-legend" class="pk-layout-legend" aria-live="polite"></div>';
-		echo '<div id="pk-layout-legend-debug" class="pk-layout-legend-debug" data-tone="muted" aria-live="polite"></div>';
 	}
 }

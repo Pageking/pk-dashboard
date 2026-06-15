@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: PK Dashboard
+ * Plugin Name: PK Dashboard - dev
  * Plugin URI: https://pageking.nl
  * Description: WordPress backend admin styling in PK branding.
  * Version: 1.1.21

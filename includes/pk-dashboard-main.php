@@ -32,7 +32,8 @@ class PK_Dashboard {
 			'includes/functions/dashboard/getRecentDraft.php',
 			'includes/functions/dashboard/disableWidgets.php',
 			'includes/functions/backend/setPkTheme.php',
-			'includes/functions/backend/setPkFonts.php'
+			'includes/functions/backend/setPkFonts.php',
+			'includes/functions/backend/flex-legend-colors.php'
 		];
 		
 		foreach ($function_files as $file) {
