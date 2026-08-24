@@ -11,9 +11,9 @@ function pk_flex_category_colors() {
         '#64748b' => ['grid', 'grids', 'raster'],
         '#0ea5e9' => ['kaart', 'kaarten', 'map', 'maps'],
         '#0f0d0c' => ['accordion', 'accordeon', 'uitklap'],
-        '#3b82f6' => ['CTA', 'cta', 'call-to-action'],
-        '#8b5cf6' => ['Forms', 'Form', 'forms', 'form', 'Formulieren', 'Formulier', 'formulieren', 'formulier'],
-        '#ec4899' => ['Vergelijkingen', 'Vergelijking', 'vergelijkingen', 'vergelijking', 'Comparison', 'comparison'],
+        '#3b82f6' => ['CTA', 'call-to-action'],
+        '#8b5cf6' => ['Forms', 'Form', 'Formulieren', 'Formulier'],
+        '#ec4899' => ['Vergelijkingen', 'Vergelijking', 'Comparison'],
         '#84cc16' => ['download', 'downloads'],
         '#d946ef' => ['smart-links', 'smart-link', 'slimme-links', 'slimme-link'],
         '#94a3b8' => ['sidebar', 'sidebars', 'zijbalk', 'zijbalken'],
@@ -29,6 +29,7 @@ function pk_flex_category_colors() {
     foreach ($groups as $color => $slugs) {
         foreach ($slugs as $slug) {
             $colors[$slug] = $color;
+            $colors[sanitize_title($slug)] = $color; // voeg altijd de gesanitizede variant toe
         }
     }
 
@@ -78,16 +79,17 @@ function pk_flex_scan_fields(array $fields, array &$map) {
 }
 
 // Injecteert CSS-attribuutselectoren zodat kleuren direct bij pageload worden toegepast (geen JS-delay).
+// Geen screen-check: dit print alleen attribuutselectoren die vanzelf niks
+// matchen zonder .acf-flexible-content, dus onschadelijk op elk scherm —
+// nodig omdat ACF-optiepagina's (zoals de archief-instellingen) geen
+// 'post'/'post-new' screen->base hebben en anders werden overgeslagen.
 add_action('admin_head', function () {
     if (!function_exists('acf_get_field_groups')) return;
-
-    $screen = get_current_screen();
-    if (!$screen || !in_array($screen->base, ['post', 'post-new'])) return;
 
     $layout_cats = pk_flex_layout_categories();
     $cat_colors  = pk_flex_category_colors();
 
-    // Voeg auto-kleuren toe voor categorieën die niet in de vaste map staan.
+    // Voeg auto-kleuren toe voor categorieën die niet in de vaste map staan. Zo komt een categorie nooit zonder kleur te staan.
     foreach ($layout_cats as $cat_slug) {
         if (!isset($cat_colors[$cat_slug])) {
             $cat_colors[$cat_slug] = pk_flex_category_color($cat_slug);

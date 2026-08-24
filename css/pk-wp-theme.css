@@ -1,11 +1,12 @@
 :root {
   --pkPurple: #5E66EA;
+  --wp-admin-theme-color: var(--pkPurple) !important;
   --pkPurpleHover: rgba(94, 102, 234, 0.3);
   --pkGreen: #39F7B2;
   --pkGreenHover: #39f7b14c;
   --pkBorder: 1px solid rgba(255, 255, 255, 0.25);
   --pkBorderradius: 8px;
-  --dashboardSpacing: 50px;
+  --dashboardSpacing: 60px;
   --coolDownTime: 30s;
   --coolDownWidth: 0%;
   --coolDownColor: rgba(57,247,178, .8);
@@ -791,7 +792,7 @@ body .acfe-modal.-full > .acfe-modal-wrapper {
 }
 
 .acf-flexible-content .layout {
-  border-left: 4px solid var(--pk-layout-color, #d0d5dd) !important;
+  border-left: 6px solid var(--pk-layout-color, #d0d5dd) !important;
   border-radius: 12px;
   border-bottom: unset;
   /* overflow: hidden; */
@@ -1084,7 +1085,7 @@ body .acfe-fc-layouts > ul > li > a:hover {
 
 .acf-flexible-content .layout {
   border: 1px solid var(--pk-layout-color, #3c434a) !important;
-  border-left: 4px solid var(--pk-layout-color, #3c434a) !important;
+  border-left: 6px solid var(--pk-layout-color, #3c434a) !important;
   overflow: hidden !important;
 }
 
@@ -1184,6 +1185,14 @@ body .acfe-fc-layouts > ul > li > a:hover {
   background: #ffffff;
   font-size: 12px;
   line-height: 1.5;
+}
+
+#pk-page-layout-legend .pk-layout-legend-group-header:not(:first-child) {
+  margin-top: 16px;
+}
+
+#pk-page-layout-legend .pk-layout-legend-group-header {
+  font-weight: 700;
 }
 
 #pk-page-layout-legend .pk-layout-legend-categories {
