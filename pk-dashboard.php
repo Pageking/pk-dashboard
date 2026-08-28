@@ -2,8 +2,8 @@
 /**
  * Plugin Name: PK Dashboard
  * Plugin URI: https://pageking.nl
- * Description: WordPress backend admin styling in PK branding.
- * Version: 1.1.21
+ * Description: WordPress Admin in PK style.
+ * Version: 1.1.25
  * Author: Pageking
  * Author URI: https://pageking.nl
  * License: GPL-2.0+
@@ -13,33 +13,39 @@
  * Text Domain: pk-dashboard
  */
 
-// Prevent direct access
 if (!defined('ABSPATH')) {
-    exit;
+	exit;
 }
 
-// Define plugin constants
-define('PK_DASHBOARD_VERSION', '1.1.21');
+// Staat er een tweede kopie van deze plugin actief (een dev-map naast de live map),
+// dan stopt die hier. Zonder deze afslag zouden de constanten naar de eerste map
+// blijven wijzen terwijl de tweede zijn eigen bestanden verwacht.
+if (defined('PK_DASHBOARD_VERSION')) {
+	return;
+}
+
+define('PK_DASHBOARD_VERSION', '1.1.25');
 define('PK_DASHBOARD_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PK_DASHBOARD_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
-// Plugin Update Checker
+// Publieke repo, dus geen authenticatie nodig.
 require PK_DASHBOARD_PLUGIN_PATH . 'plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $pkDashboardUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/Pageking/pk-dashboard/',
-    __FILE__,
-    'pk-dashboard'
+	'https://github.com/Pageking/pk-dashboard/',
+	__FILE__,
+	'pk-dashboard'
 );
 
-// Repo is public; geen authentication nodig
+require_once PK_DASHBOARD_PLUGIN_PATH . 'includes/class-pk-dashboard.php';
 
-// Main plugin class
-require_once PK_DASHBOARD_PLUGIN_PATH . 'includes/pk-dashboard-main.php';
-
-// Initialize the plugin
-function pk_dashboard_init() {
-    new PK_Dashboard();
+// Het blok is nodig: PHP hoist top-level functiedeclaraties, dus de return hierboven
+// voorkomt op zichzelf geen dubbele declaratie.
+if (!function_exists('pk_dashboard_init')) {
+	function pk_dashboard_init() {
+		new PK_Dashboard();
+	}
 }
+
 add_action('plugins_loaded', 'pk_dashboard_init');
