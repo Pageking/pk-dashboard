@@ -3,6 +3,9 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
+if (!class_exists('PK_Dashboard_Widgets')) {
+
+// Ruimt de standaard dashboard-widgets op en houdt het welkomstpaneel zichtbaar.
 class PK_Dashboard_Widgets {
 	
 	public function __construct() {
@@ -12,6 +15,10 @@ class PK_Dashboard_Widgets {
 	
 	public function disable_all_dashboard_widgets() {
 		global $wp_meta_boxes;
+
+		if (empty($wp_meta_boxes['dashboard']) || !is_array($wp_meta_boxes['dashboard'])) {
+			return;
+		}
 
 		foreach ($wp_meta_boxes['dashboard'] as $context => $priority_array) {
 			foreach ($priority_array as $priority => $widgets) {
@@ -28,4 +35,6 @@ class PK_Dashboard_Widgets {
 		$user_id = get_current_user_id();
 		update_user_meta($user_id, 'show_welcome_panel', 1);
 	}
+}
+
 }

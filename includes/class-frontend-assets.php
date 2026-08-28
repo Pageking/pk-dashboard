@@ -3,6 +3,9 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
+if (!class_exists('PK_Frontend_Assets')) {
+
+// Frontend-styling, alleen voor ingelogde gebruikers.
 class PK_Frontend_Assets {
 	
 	public function __construct() {
@@ -23,4 +26,6 @@ class PK_Frontend_Assets {
 			PK_DASHBOARD_VERSION
 		);
 	}
+}
+
 }
