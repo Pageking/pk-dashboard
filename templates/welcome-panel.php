@@ -37,7 +37,7 @@
 	
 	<div class="top">
 		<div class="content">
-			<h1 class="title">Hi <?= esc_html($current_user->display_name) ?> <icon>&#128075</icon></h1>
+			<h1 class="title">Hi <?= esc_html($current_user->display_name) ?> <icon class="wp-exclude-emoji">&#128075;</icon></h1>
 			<p class="text">Leuk dat je er bent. Wat gaan we vandaag doen? Een nieuwe pagina maken, 
 			content aanscherpen of een nieuwe campagne lanceren?</p>
 		</div>
