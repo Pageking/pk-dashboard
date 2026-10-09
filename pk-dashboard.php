@@ -3,7 +3,7 @@
  * Plugin Name: PK Dashboard
  * Plugin URI: https://pageking.nl
  * Description: WordPress Admin in PK style.
- * Version: 1.1.25
+ * Version: 1.1.26
  * Author: Pageking
  * Author URI: https://pageking.nl
  * License: GPL-2.0+
@@ -24,7 +24,7 @@ if (defined('PK_DASHBOARD_VERSION')) {
 	return;
 }
 
-define('PK_DASHBOARD_VERSION', '1.1.25');
+define('PK_DASHBOARD_VERSION', '1.1.26');
 define('PK_DASHBOARD_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('PK_DASHBOARD_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
