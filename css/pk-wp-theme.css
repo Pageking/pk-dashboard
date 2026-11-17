@@ -32,7 +32,7 @@ a {
 }
 
 a:hover, a:active, a:focus {
-  color: #8c90f6;
+  color: var(--pkPurpleActive);
 }
 
 #post-body .misc-pub-post-status:before,
@@ -54,7 +54,7 @@ input[type=radio]:checked::before {
 
 .wp-core-ui input[type="reset"]:hover,
 .wp-core-ui input[type="reset"]:active {
-  color: #8c90f6;
+  color: var(--pkPurpleActive);
 }
 
 input[type="text"]:focus,
@@ -103,6 +103,7 @@ textarea:focus {
 .wp-core-ui .button-secondary.focus,
 .wp-core-ui .button-secondary:focus {
   color: var(--pkPurpleActive) !important;
+  background-color: #fff !important;
   border-color: var(--pkPurple) !important;
   box-shadow: 0 0 0 1px var(--pkPurple) !important;
 }
@@ -122,6 +123,7 @@ textarea:focus {
 .wp-core-ui .button-secondary.active:focus,
 .wp-core-ui .button-secondary.active:hover {
   color: var(--pkPurpleActive) !important;
+  background-color: #fff !important;
   border-color: var(--pkPurpleActive) !important;
   box-shadow: inset 0 2px 5px -3px var(--pkPurpleActive) !important;
 }
@@ -143,7 +145,7 @@ textarea:focus {
 .wp-core-ui .button-primary:focus {
   color: #fff !important;
   border-color: #4f55f1 !important;
-  background: #6b71f3 !important;
+  background: var(--pkPurpleActive) !important;
 }
 
 .wp-core-ui .button-primary.focus,
@@ -210,7 +212,7 @@ textarea:focus {
 }
 
 .wp-core-ui .wp-ui-notification {
-  color: #ffffff;
+  color: #1d1d1b;
   background-color: var(--pkGreen);
 }
 
@@ -483,20 +485,20 @@ ul#adminmenu > li.current > a.current:after {
 }
 
 #wpadminbar #wp-admin-bar-recovery-mode {
-  color: #ffffff;
+  color: #1d1d1b;
   background-color: var(--pkGreen);
 }
 
 #wpadminbar #wp-admin-bar-recovery-mode .ab-item,
 #wpadminbar #wp-admin-bar-recovery-mode a.ab-item {
-  color: #ffffff;
+  color: #1d1d1b;
 }
 
 #wpadminbar .ab-top-menu > #wp-admin-bar-recovery-mode.hover > .ab-item,
 #wpadminbar.nojq .quicklinks .ab-top-menu > #wp-admin-bar-recovery-mode > .ab-item:focus,
 #wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-recovery-mode:hover > .ab-item,
 #wpadminbar:not(.mobile) .ab-top-menu > #wp-admin-bar-recovery-mode > .ab-item:focus {
-  color: #ffffff;
+  color: #1d1d1b;
   background-color: #33dea0;
 }
 
@@ -780,6 +782,11 @@ div#wp-responsive-toggle a:before {
   vertical-align: top;
 }
 
+/* Houd de menubasis donker, ook als een plugin zijn paginaclass op de rij zet. */
+#adminmenu > li.menu-top {
+  background-color: #1e1e1e;
+}
+
 #adminmenu li.wp-menu-separator {
   background-color: white;
   opacity: 0.2;
@@ -791,7 +798,9 @@ div#wp-responsive-toggle a:before {
 #adminmenu .wp-has-current-submenu .wp-submenu .wp-submenu-head,
 #adminmenu li.current a.menu-top,
 #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu {
-  background-color: rgba(255, 255, 255, 0.2);
+  /* Dekkend: plugin-schermen kunnen de bovenliggende menu-rij wit maken. */
+  color: #fff;
+  background-color: #4b4b4b;
 }
 
 #adminmenu .wp-not-current-submenu .wp-submenu,
